@@ -34,10 +34,10 @@ const forecast = computed(() => {
   for (const f of data.value.dataseries) {
     empty.push({
       hours: f.timepoint,
-      temp: f.temp2m,
-      humi: f.rh2m,
+      temp: `${f.temp2m}°C`,
+      humi: `${f.rh2m}%`,
       wind: `${windToSpeed[f.wind10m.speed]}m/s ${f.wind10m.direction}`,
-      cloud: f.cloudcover,
+      cloud: `${f.cloudcover * 10}%`,
     });
   }
   return empty;
@@ -124,11 +124,11 @@ const forecastDate = computed(() => {
           <div class="resoults__grid">
             <p>Temperature:</p>
             <p>{{ forecast[forecastPoint].temp }}</p>
-            <p>Humidity:</p>
-            <p>{{ forecast[forecastPoint].humi }}</p>
             <p>Wind:</p>
             <p>{{ forecast[forecastPoint].wind }}</p>
-            <p>Clouds:</p>
+            <p>Humidity:</p>
+            <p>{{ forecast[forecastPoint].humi }}</p>
+            <p>Cloud cover:</p>
             <p>{{ forecast[forecastPoint].cloud }}</p>
           </div>
         </section>
