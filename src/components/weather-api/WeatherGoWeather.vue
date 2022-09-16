@@ -3,11 +3,16 @@ import { ref, computed } from "vue";
 import { useGoWeather } from "@/composables/api/weather-api";
 
 const city = ref("London");
+const citySearch = ref("London");
 const url = computed(
   () => `https://goweather.herokuapp.com/weather/${city.value}`
 );
+function searchWeather() {
+  citySearch.value = city.value;
+  refetch.value();
+}
 
-const { isFetching, isError, data, error, refetch } = useGoWeather(city);
+const { isFetching, isError, data, error, refetch } = useGoWeather(citySearch);
 
 const forecastDay = ref(0);
 const forecastDate = computed(() => {
@@ -43,15 +48,15 @@ const forecast = computed(() => {
           id="city"
           type="text"
         />
-        <button @click="refetch()" class="weather__button">Request</button>
+        <button @click="searchWeather" class="weather__button">Request</button>
       </div>
     </section>
 
     <article class="weather__data resoults">
       <h3 class="resoults__title mb1">Resoults</h3>
-      <div v-if="isError">{{ error }}</div>
-      <div v-else-if="isFetching">Fetching data</div>
-      <div v-else class="resoults__all resoults__row">
+      <div v-if="isError" class="mi1">{{ error }}</div>
+      <div v-else-if="isFetching" class="mi1">Fetching data</div>
+      <div v-else class="resoults__all mi1">
         <section class="resoults__current resoults__column">
           <h4 class="mb1">Today</h4>
           <div class="resoults__grid">
@@ -165,10 +170,15 @@ const forecast = computed(() => {
 
 .resoults {
   &__all {
-    margin-inline: 1rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-    justify-content: center;
-    justify-content: space-evenly;
+    @media screen and (max-width: 768px) {
+      flex-direction: column;
+      align-items: left;
+      gap: 1.5rem;
+    }
   }
 
   &__row {
@@ -197,5 +207,9 @@ const forecast = computed(() => {
 
 .mb1 {
   margin-bottom: 1rem;
+}
+
+.mi1 {
+  margin-inline: 1rem;
 }
 </style>
