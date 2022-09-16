@@ -1,3 +1,4 @@
+import type { Ref } from "vue";
 import { useQuery } from "vue-query";
 import axios from "axios";
 
@@ -69,11 +70,11 @@ export function useRainViwer() {
   );
 }
 
-export function useGoWeather() {
+export function useGoWeather(city: Ref<string>) {
   return useQuery(
     "countries",
     () =>
-      axios("https://goweather.herokuapp.com/weather/Curitiba", {
+      axios(`https://goweather.herokuapp.com/weather/${city.value}`, {
         method: "GET",
       }),
     {

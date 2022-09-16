@@ -25,12 +25,14 @@ const emit = defineEmits<{
 
 <style scoped lang="scss">
 .link {
+  padding: 0.4rem 0;
+
   text-align: center;
   overflow-x: hidden;
   cursor: pointer;
 
   &--selected {
-    background-color: #e5e5e5;
+    background-color: $foreground;
   }
 }
 </style>
