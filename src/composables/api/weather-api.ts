@@ -2,12 +2,12 @@ import type { Ref } from "vue";
 import { useQuery } from "vue-query";
 import axios from "axios";
 
-export function use7timer() {
+export function use7timer(lat: Ref<number>, lon: Ref<number>) {
   return useQuery(
-    "countries",
+    "7timer",
     () =>
       axios(
-        "http://www.7timer.info/bin/api.pl?lon=113.17&lat=23.09&product=astro&output=json",
+        `http://www.7timer.info/bin/api.pl?lon=${lon}&lat=${lat}&product=astro&output=json`,
         {
           method: "GET",
         }
@@ -21,7 +21,7 @@ export function use7timer() {
 
 export function useOpenMetro() {
   return useQuery(
-    "countries",
+    "openmetro",
     () =>
       axios(
         "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m",
@@ -38,7 +38,7 @@ export function useOpenMetro() {
 
 export function useOpenSenseMap() {
   return useQuery(
-    "countries",
+    "opensensemap",
     () =>
       axios(
         "https://api.open-meteo.com/v1/forecast?latitude=52.52&longitude=13.41&hourly=temperature_2m",
@@ -55,7 +55,7 @@ export function useOpenSenseMap() {
 
 export function useRainViwer() {
   return useQuery(
-    "countries",
+    "rainviwer",
     () =>
       axios(
         "https://tilecache.rainviewer.com/v2/radar/1663309800/512/2/2/1/1/1_1.png",
@@ -72,7 +72,7 @@ export function useRainViwer() {
 
 export function useGoWeather(city: Ref<string>) {
   return useQuery(
-    "countries",
+    "goweathers",
     () =>
       axios(`https://goweather.herokuapp.com/weather/${city.value}`, {
         method: "GET",

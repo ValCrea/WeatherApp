@@ -3,16 +3,11 @@ import { ref, computed } from "vue";
 import { useGoWeather } from "@/composables/api/weather-api";
 
 const city = ref("London");
-const citySearch = ref("London");
 const url = computed(
   () => `https://goweather.herokuapp.com/weather/${city.value}`
 );
-function searchWeather() {
-  citySearch.value = city.value;
-  refetch.value();
-}
 
-const { isFetching, isError, data, error, refetch } = useGoWeather(citySearch);
+const { isFetching, isError, data, error, refetch } = useGoWeather(city);
 
 const forecastDay = ref(0);
 const forecastDate = computed(() => {
@@ -21,11 +16,12 @@ const forecastDate = computed(() => {
   return currentDate.toLocaleDateString("en-UK");
 });
 const forecast = computed(() => {
-  const empty = [];
-  if (data.value)
-    for (let f of data.value.data.forecast) {
-      empty.push({ temp: f.temperature, wind: f.wind });
-    }
+  const empty: any[] = [];
+  if (!data.value) return empty;
+  console.log(data.value);
+  for (let f of data.value.data.forecast) {
+    empty.push({ temp: f.temperature, wind: f.wind });
+  }
   return empty;
 });
 </script>
@@ -48,7 +44,17 @@ const forecast = computed(() => {
           id="city"
           type="text"
         />
-        <button @click="searchWeather" class="weather__button">Request</button>
+        <div :class="{ 'not-allowed': isFetching }">
+          <button
+            @click="refetch()"
+            :class="{
+              'weather__button--disabled': isFetching,
+            }"
+            class="weather__button"
+          >
+            Request
+          </button>
+        </div>
       </div>
     </section>
 
@@ -71,23 +77,29 @@ const forecast = computed(() => {
         <section class="resoults__forecast resoults__column">
           <h4 class="mb1">Forecast</h4>
           <div class="resoults__row">
-            <button
-              @click="forecastDay--"
-              :class="{ 'weather__button--disabled': forecastDay <= 0 }"
-              class="weather__button"
-            >
-              &lt;
-            </button>
+            <div :class="{ 'not-allowed': forecastDay <= 0 }">
+              <button
+                @click="forecastDay--"
+                :class="{ 'weather__button--disabled': forecastDay <= 0 }"
+                class="weather__button"
+              >
+                &lt;
+              </button>
+            </div>
             <p>{{ forecastDate }}</p>
-            <button
-              @click="forecastDay++"
-              :class="{
-                'weather__button--disabled': forecastDay >= forecast.length - 1,
-              }"
-              class="weather__button"
-            >
-              &gt;
-            </button>
+
+            <div :class="{ 'not-allowed': forecastDay >= forecast.length - 1 }">
+              <button
+                @click="forecastDay++"
+                :class="{
+                  'weather__button--disabled':
+                    forecastDay >= forecast.length - 1,
+                }"
+                class="weather__button"
+              >
+                &gt;
+              </button>
+            </div>
           </div>
           <div class="resoults__grid">
             <p>Temperature:</p>
@@ -139,6 +151,7 @@ const forecast = computed(() => {
     width: fit-content;
     border: none;
     background-color: $highlight;
+    cursor: pointer;
 
     &:hover {
       background-color: $hover;
@@ -147,6 +160,7 @@ const forecast = computed(() => {
     &--disabled {
       pointer-events: none;
       background-color: $hover;
+      cursor: not-allowed;
     }
   }
 
@@ -203,6 +217,10 @@ const forecast = computed(() => {
   }
   &__forecats {
   }*/
+}
+
+.not-allowed {
+  cursor: not-allowed;
 }
 
 .mb1 {

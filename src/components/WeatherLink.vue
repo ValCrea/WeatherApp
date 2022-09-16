@@ -31,6 +31,8 @@ const emit = defineEmits<{
   overflow-x: hidden;
   cursor: pointer;
 
+  border-left: solid 0.5rem $foreground;
+
   &--selected {
     background-color: $foreground;
   }
