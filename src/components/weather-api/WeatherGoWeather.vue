@@ -26,7 +26,6 @@ const forecast = computed(() => {
   const empty: any[] = [];
   if (!data.value) return empty;
   for (let f of data.value.forecast) {
-    console.log(f);
     empty.push({ temp: f.temperature, wind: f.wind });
   }
   return empty;
@@ -50,6 +49,7 @@ const forecast = computed(() => {
           class="weather__input weather__input--disabled"
           id="city"
           type="text"
+          readonly
         />
         <div :class="{ 'not-allowed': isFetching }">
           <button

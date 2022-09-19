@@ -5,7 +5,6 @@ import { use7timer } from "@/composables/api/weather-api";
 const selected = ref(true);
 onActivated(() => (selected.value = true));
 onDeactivated(() => (selected.value = false));
-onActivated(() => console.log(data.value?.length));
 
 const lat = ref(51);
 const lon = ref(1);
@@ -83,6 +82,7 @@ const forecastDate = computed(() => {
           class="weather__input weather__input--disabled"
           id="url"
           type="text"
+          disabled="true"
         />
         <div :class="{ 'not-allowed': isFetching }">
           <button
@@ -101,7 +101,7 @@ const forecastDate = computed(() => {
     <article class="weather__data resoults">
       <h3 class="resoults__title mb1">Resoults</h3>
       <div v-if="isError" class="mi1">{{ error }}</div>
-      <div v-else-if="isFetching" class="mi1">Fetching data</div>
+      <div v-else-if="isFetching || !data" class="mi1">Fetching data</div>
       <div v-else-if="data.length <= 0" class="mi1">No data</div>
       <div v-else class="resoults__all mi1">
         <section class="resoults__forecast resoults__column">
