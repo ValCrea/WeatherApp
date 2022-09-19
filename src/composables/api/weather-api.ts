@@ -2,24 +2,31 @@ import type { Ref } from "vue";
 import { useQuery } from "vue-query";
 import axios from "axios";
 
-export function use7timer(lat: Ref<number>, lon: Ref<number>) {
+export function use7timer(
+  lat: Ref<number>,
+  lon: Ref<number>,
+  enabled: Ref<any>
+) {
   return useQuery(
     "7timer",
     () =>
       axios(
-        `http://www.7timer.info/bin/api.pl?lon=${lon}&lat=${lat}&product=astro&output=json`,
+        `https://www.7timer.info/bin/astro.php?lon=${lon}&lat=${lat}&ac=0&unit=metric&output=json`,
         {
           method: "GET",
         }
       ),
     {
       //placeholderData: { data: { data: [] } },
-      select: (response: { data: any }) => response.data,
+      select: (response: { data: { dataseries: any } }) =>
+        response.data.dataseries,
+      retry: false,
+      enabled,
     }
   );
 }
 
-export function useOpenMetro() {
+export function useOpenMetro(enabled: Ref<any>) {
   return useQuery(
     "openmetro",
     () =>
@@ -32,11 +39,13 @@ export function useOpenMetro() {
     {
       //placeholderData: { data: { data: [] } },
       //select: (response: { data: any }) => response.data,
+      retry: false,
+      enabled,
     }
   );
 }
 
-export function useOpenSenseMap() {
+export function useOpenSenseMap(enabled: Ref<any>) {
   return useQuery(
     "opensensemap",
     () =>
@@ -49,11 +58,13 @@ export function useOpenSenseMap() {
     {
       //placeholderData: { data: { data: [] } },
       //select: (response: { data: any }) => response.data,
+      retry: false,
+      enabled,
     }
   );
 }
 
-export function useRainViwer() {
+export function useRainViwer(enabled: Ref<any>) {
   return useQuery(
     "rainviwer",
     () =>
@@ -66,11 +77,13 @@ export function useRainViwer() {
     {
       //placeholderData: { data: { data: [] } },
       //select: (response: { data: any }) => response.data,
+      retry: false,
+      enabled,
     }
   );
 }
 
-export function useGoWeather(city: Ref<string>) {
+export function useGoWeather(city: Ref<string>, enabled: Ref<any>) {
   return useQuery(
     "goweathers",
     () =>
@@ -79,7 +92,9 @@ export function useGoWeather(city: Ref<string>) {
       }),
     {
       //placeholderData: { data: { data: [] } },
-      //select: (response: { data: any }) => response.data,
+      select: (response: { data: any }) => response.data,
+      retry: false,
+      enabled,
     }
   );
 }

@@ -1,13 +1,20 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onActivated, onDeactivated } from "vue";
 import { useGoWeather } from "@/composables/api/weather-api";
+
+const selected = ref(true);
+onActivated(() => (selected.value = true));
+onDeactivated(() => (selected.value = false));
 
 const city = ref("London");
 const url = computed(
   () => `https://goweather.herokuapp.com/weather/${city.value}`
 );
 
-const { isFetching, isError, data, error, refetch } = useGoWeather(city);
+const { isFetching, isError, data, error, refetch } = useGoWeather(
+  city,
+  selected
+);
 
 const forecastDay = ref(0);
 const forecastDate = computed(() => {
@@ -18,8 +25,8 @@ const forecastDate = computed(() => {
 const forecast = computed(() => {
   const empty: any[] = [];
   if (!data.value) return empty;
-  console.log(data.value);
-  for (let f of data.value.data.forecast) {
+  for (let f of data.value.forecast) {
+    console.log(f);
     empty.push({ temp: f.temperature, wind: f.wind });
   }
   return empty;
@@ -62,16 +69,17 @@ const forecast = computed(() => {
       <h3 class="resoults__title mb1">Resoults</h3>
       <div v-if="isError" class="mi1">{{ error }}</div>
       <div v-else-if="isFetching" class="mi1">Fetching data</div>
+      <div v-else-if="!data" class="mi1">No data</div>
       <div v-else class="resoults__all mi1">
         <section class="resoults__current resoults__column">
           <h4 class="mb1">Today</h4>
           <div class="resoults__grid">
             <p>Description:</p>
-            <p>{{ data?.data.description }}</p>
+            <p>{{ data.description }}</p>
             <p>Temperature:</p>
-            <p>{{ data?.data.temperature }}</p>
+            <p>{{ data.temperature }}</p>
             <p>Wind:</p>
-            <p>{{ data?.data.wind }}</p>
+            <p>{{ data.wind }}</p>
           </div>
         </section>
         <section class="resoults__forecast resoults__column">

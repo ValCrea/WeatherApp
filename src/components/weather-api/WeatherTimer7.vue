@@ -1,15 +1,24 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, onActivated, onDeactivated } from "vue";
 import { use7timer } from "@/composables/api/weather-api";
 
+const selected = ref(true);
+onActivated(() => (selected.value = true));
+onDeactivated(() => (selected.value = false));
+onActivated(() => console.log(data.value?.length));
+
 const lat = ref(51);
-const lon = ref(0);
+const lon = ref(1);
 const url = computed(
   () =>
     `http://www.7timer.info/bin/api.pl?lon=${lon.value}&lat=${lat.value}&product=astro&output=json`
 );
 
-const { isFetching, isError, data, error, refetch } = use7timer(lat, lon);
+const { isFetching, isError, data, error, refetch } = use7timer(
+  lat,
+  lon,
+  selected
+);
 
 const windToSpeed: { [key: number]: number } = {
   1: 0.3,
@@ -29,9 +38,9 @@ const forecast = computed(() => {
     wind: string;
     cloud: string;
   }[] = [];
-  if (!data.value?.dataseries) return empty;
+  if (!data.value) return empty;
 
-  for (const f of data.value.dataseries) {
+  for (const f of data.value) {
     empty.push({
       hours: f.timepoint,
       temp: `${f.temp2m}°C`,
@@ -45,6 +54,9 @@ const forecast = computed(() => {
 const forecastPoint = ref(0);
 const forecastDate = computed(() => {
   const currentDate = new Date();
+
+  if (forecast.value.length <= 0) return currentDate.toLocaleString("en-UK");
+
   currentDate.setTime(
     currentDate.getTime() + forecast.value[forecastPoint.value].hours * 3600000
   );
@@ -90,6 +102,7 @@ const forecastDate = computed(() => {
       <h3 class="resoults__title mb1">Resoults</h3>
       <div v-if="isError" class="mi1">{{ error }}</div>
       <div v-else-if="isFetching" class="mi1">Fetching data</div>
+      <div v-else-if="data.length <= 0" class="mi1">No data</div>
       <div v-else class="resoults__all mi1">
         <section class="resoults__forecast resoults__column">
           <h4 class="mb1">Forecast</h4>
